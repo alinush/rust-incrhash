@@ -28,4 +28,3 @@
 
 //criterion_group!(benches, hash_to_curve_benchmark::<blake2::Blake2b512>, hash_to_curve_benchmark::<sha2::Sha512>);
 //criterion_main!(benches);
-
