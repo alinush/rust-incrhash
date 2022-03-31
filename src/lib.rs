@@ -126,4 +126,18 @@ mod tests {
         c -= & b;
         assert_eq!(c, RistBlakeIncHash::default());
     }
+
+    #[test]
+    fn commutes() {
+        let a = RistBlakeIncHash::from(b"hello world".as_slice());
+        let b = RistBlakeIncHash::from(b"sup universe".as_slice());
+        let c = RistBlakeIncHash::from(b"peace".as_slice());
+
+        let h1 = &a + &b + &c;
+        let h2 = &c + &b + &a;
+        let h3 = &c + &a + &b;
+
+        assert_eq!(h1, h2);
+        assert_eq!(h1, h3);
+    }
 }
