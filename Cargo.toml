@@ -18,3 +18,7 @@ sha3 = "0.10.1"
 [[bench]]
 name = "hash_to_curve"
 harness = false
+
+[[bench]]
+name = "incr_hash"
+harness = false

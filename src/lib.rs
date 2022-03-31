@@ -32,6 +32,8 @@ pub struct IncrHash<P, H> {
     h: PhantomData<H>,
 }
 
+pub type RistBlakeIncHash = IncrHash<RistrettoPoint, blake2::Blake2b512>;
+
 impl<P: PartialEq + Debug, H> PartialEq for IncrHash<P, H> {
     fn eq(&self, other: &Self) -> bool {
         self.point == other.point
@@ -98,3 +100,30 @@ impl<'b, H> SubAssign<&'b IncrHash<RistrettoPoint, H>> for IncrHash<RistrettoPoi
 }
 
 define_sub_assign_variants!(LHS = IncrHash<RistrettoPoint, blake2::Blake2b512>, RHS = IncrHash<RistrettoPoint, blake2::Blake2b512>);
+
+#[cfg(test)]
+mod tests {
+    use crate::RistBlakeIncHash;
+
+    #[test]
+    fn bvt() {
+        let mut h1: RistBlakeIncHash = RistBlakeIncHash::default();
+        let h2: RistBlakeIncHash = RistBlakeIncHash::default();
+        assert_eq!(h1, h2);
+
+        assert_eq!(RistBlakeIncHash::from(b"hello world".as_slice()),
+                   RistBlakeIncHash::from(b"hello world".as_slice()));
+
+        let a = RistBlakeIncHash::from(b"hello world".as_slice());
+        let b = RistBlakeIncHash::from(b"sup universe".as_slice());
+
+        let mut c = & a + & b;
+        h1 += & a;
+        h1 += & b;
+        assert_eq!(c, h1);
+
+        c -= & a;
+        c -= & b;
+        assert_eq!(c, RistBlakeIncHash::default());
+    }
+}
