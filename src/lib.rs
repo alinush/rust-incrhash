@@ -6,7 +6,7 @@ use curve25519_dalek::ristretto::RistrettoPoint;
 use curve25519_dalek::traits::Identity;
 use digest::consts::U64;
 use digest::Digest;
-use std::fmt::Debug;
+use std::fmt::{Debug, Display, Formatter};
 use std::marker::PhantomData;
 use std::ops::{Add, AddAssign, Sub, SubAssign};
 
@@ -30,6 +30,12 @@ impl HashableFromBytes for EdwardsPoint {
 pub struct IncrHash<P, H> {
     point: P,
     h: PhantomData<H>,
+}
+
+impl<H> Display for IncrHash<RistrettoPoint, H> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", hex::encode(self.point.compress().as_bytes()))
+    }
 }
 
 pub type RistBlakeIncHash = IncrHash<RistrettoPoint, blake2::Blake2b512>;
