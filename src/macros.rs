@@ -71,7 +71,7 @@ macro_rules! define_sub_variants {
                 &self - &rhs
             }
         }
-    }
+    };
 }
 
 /// Define non-borrow variants of `SubAssign`.
@@ -82,7 +82,7 @@ macro_rules! define_sub_assign_variants {
                 *self -= &rhs;
             }
         }
-    }
+    };
 }
 
 // /// Define borrow and non-borrow variants of `Mul`.

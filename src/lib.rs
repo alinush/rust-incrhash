@@ -6,6 +6,7 @@ use curve25519_dalek::ristretto::RistrettoPoint;
 use curve25519_dalek::traits::Identity;
 use digest::consts::U64;
 use digest::Digest;
+use serde::{self, Deserialize, Serialize};
 use std::fmt::{Debug, Display, Formatter};
 use std::marker::PhantomData;
 use std::ops::{Add, AddAssign, Sub, SubAssign};
@@ -26,7 +27,7 @@ impl HashableFromBytes for EdwardsPoint {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct IncrHash<P, H> {
     point: P,
     h: PhantomData<H>,
@@ -85,7 +86,6 @@ impl<'b, H> AddAssign<&'b IncrHash<RistrettoPoint, H>> for IncrHash<RistrettoPoi
 
 define_add_assign_variants!(LHS = IncrHash<RistrettoPoint, blake2::Blake2b512>, RHS = IncrHash<RistrettoPoint, blake2::Blake2b512>);
 
-
 impl<'a, 'b, H> Sub<&'b IncrHash<RistrettoPoint, H>> for &'a IncrHash<RistrettoPoint, H> {
     type Output = IncrHash<RistrettoPoint, H>;
 
@@ -117,19 +117,21 @@ mod tests {
         let h2: RistBlakeIncHash = RistBlakeIncHash::default();
         assert_eq!(h1, h2);
 
-        assert_eq!(RistBlakeIncHash::from(b"hello world".as_slice()),
-                   RistBlakeIncHash::from(b"hello world".as_slice()));
+        assert_eq!(
+            RistBlakeIncHash::from(b"hello world".as_slice()),
+            RistBlakeIncHash::from(b"hello world".as_slice())
+        );
 
         let a = RistBlakeIncHash::from(b"hello world".as_slice());
         let b = RistBlakeIncHash::from(b"sup universe".as_slice());
 
-        let mut c = & a + & b;
-        h1 += & a;
-        h1 += & b;
+        let mut c = &a + &b;
+        h1 += &a;
+        h1 += &b;
         assert_eq!(c, h1);
 
-        c -= & a;
-        c -= & b;
+        c -= &a;
+        c -= &b;
         assert_eq!(c, RistBlakeIncHash::default());
     }
 
