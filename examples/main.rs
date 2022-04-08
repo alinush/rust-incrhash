@@ -1,4 +1,4 @@
-use rust_incrhash::RistBlakeIncHash;
+use rust_incrhash::ristretto::RistBlakeIncHash;
 
 fn main() {
     let mut h: RistBlakeIncHash = RistBlakeIncHash::default();

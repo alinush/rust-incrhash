@@ -1,4 +1,5 @@
-A toy project on building an [incremental hash function](https://arxiv.org/abs/1601.06502) using the [Ristretto elliptic curve](https://ristretto.group/) for me to learn Rust.
+A toy project on building an [incremental hash function](https://arxiv.org/abs/1601.06502) using
+the [Ristretto elliptic curve](https://ristretto.group/) for me to learn Rust.
 
 Example code from `examples/main.rs`:
 

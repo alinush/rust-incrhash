@@ -1,8 +1,10 @@
 use criterion::{criterion_group, criterion_main, Criterion};
 use rand::{distributions::Alphanumeric, Rng};
-use rust_incrhash::RistBlakeIncHash;
 
-const KEY_SIZE: usize = 32; // 32 bytes or characters
+use rust_incrhash::ristretto::RistBlakeIncHash;
+
+const KEY_SIZE: usize = 32;
+// 32 bytes or characters
 const VALUE_SIZE: usize = 64; // 64 bytes or characters
 
 pub fn random_string(len: usize) -> String {

@@ -3,31 +3,57 @@ use criterion::{
     Criterion,
 };
 use curve25519_dalek::edwards::EdwardsPoint;
-use curve25519_dalek::ristretto::RistrettoPoint;
+use curve25519_dalek::ristretto::{CompressedRistretto, RistrettoPoint};
 use digest::consts::U64;
 use digest::Digest;
 use rand::Rng;
+
 use rust_incrhash::HashableFromBytes;
 
-const HASH_INPUT_SIZES: [usize; 8] = [32, 64, 128, 256, 512, 1024, 2048, 4096]; // 8192, 16384, 32768, 65536];
+const HASH_INPUT_SIZES: [usize; 4] = [32, 64, 128, 256]; //, 256, 512, 1024, 2048, 4096]; // 8192, 16384, 32768, 65536];
 
 pub fn hash_to_curve_group(c: &mut Criterion) {
     let mut group = c.benchmark_group("hash_to_curve");
 
+    // NOTE: RistrettoPoint::hash_from_bytes requires a 512-bit / 64-byte hash function
+    // hash_to_curve_benchmark::<CompressedRistretto, blake2::Blake2s256, _>(
+    //     &mut group,
+    //     "comprist/blake2s256",
+    // );
+    // hash_to_curve_benchmark::<RistrettoPoint, blake2::Blake2s256, _>(&mut group, "rist/blake2s256");
+    // hash_to_curve_benchmark::<EdwardsPoint, blake2::Blake2s256, _>(&mut group, "edw/blake2s256");
+
+    hash_to_curve_benchmark::<CompressedRistretto, blake2::Blake2b512, _>(
+        &mut group,
+        "comprist/blake2b512",
+    );
     hash_to_curve_benchmark::<RistrettoPoint, blake2::Blake2b512, _>(&mut group, "rist/blake2b512");
     hash_to_curve_benchmark::<EdwardsPoint, blake2::Blake2b512, _>(&mut group, "edw/blake2b512");
 
     // WARNING: It seems like the Elligator2 hashing used inside curve25519-dalek asks for a hash function with 512 bit output
     //hash_to_curve_benchmark::<sha2::Sha256, _>(&mut group, "sha256");
 
+    hash_to_curve_benchmark::<CompressedRistretto, sha2::Sha512, _>(
+        &mut group,
+        "comprist/sha2-512",
+    );
     hash_to_curve_benchmark::<RistrettoPoint, sha2::Sha512, _>(&mut group, "rist/sha2-512");
     hash_to_curve_benchmark::<EdwardsPoint, sha2::Sha512, _>(&mut group, "edw/sha2-512");
 
+    hash_to_curve_benchmark::<CompressedRistretto, sha3::Sha3_512, _>(
+        &mut group,
+        "comprist/sha3-512",
+    );
     hash_to_curve_benchmark::<RistrettoPoint, sha3::Sha3_512, _>(&mut group, "rist/sha3-512");
     hash_to_curve_benchmark::<EdwardsPoint, sha3::Sha3_512, _>(&mut group, "edw/sha3-512");
 
-    hash_to_curve_benchmark::<RistrettoPoint, sha3::Keccak512, _>(&mut group, "rist/keccak512");
-    hash_to_curve_benchmark::<EdwardsPoint, sha3::Keccak512, _>(&mut group, "edw/keccak512");
+    // NOTE: These numbers are the same as sha3-512
+    // hash_to_curve_benchmark::<CompressedRistretto, sha3::Keccak512, _>(
+    //     &mut group,
+    //     "comprist/keccak512",
+    // );
+    // hash_to_curve_benchmark::<RistrettoPoint, sha3::Keccak512, _>(&mut group, "rist/keccak512");
+    // hash_to_curve_benchmark::<EdwardsPoint, sha3::Keccak512, _>(&mut group, "edw/keccak512");
 
     group.finish();
 }
