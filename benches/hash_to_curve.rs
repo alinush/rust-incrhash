@@ -1,7 +1,4 @@
-use criterion::{
-    criterion_group, criterion_main, measurement::Measurement, BenchmarkGroup, BenchmarkId,
-    Criterion,
-};
+use criterion::{criterion_group, criterion_main, measurement::Measurement, BenchmarkGroup, BenchmarkId, Criterion, Throughput};
 use curve25519_dalek::edwards::EdwardsPoint;
 use curve25519_dalek::ristretto::{CompressedRistretto, RistrettoPoint};
 use digest::consts::U64;
@@ -68,6 +65,7 @@ pub fn hash_to_curve_benchmark<
 ) {
     let bench_name = hash_alg_name.to_owned();
     for input_size in &HASH_INPUT_SIZES {
+        c.throughput(Throughput::Elements(1));
         c.bench_with_input(
             BenchmarkId::new(&bench_name, *input_size),
             input_size,
